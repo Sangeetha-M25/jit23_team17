@@ -1,0 +1,35 @@
+Product,Category,Price,BrainState,Image
+Rice,Staples,3,Concentration,rice.png
+Wheat Flour,Staples,4,Concentration,flour.png
+Sugar,Staples,2,Concentration,sugar.png
+Salt,Staples,1,Concentration,salt.png
+Cooking Oil,Staples,8,Concentration,oil.png
+Milk,Dairy,2,Concentration,milk.png
+Eggs,Dairy,4,Concentration,eggs.png
+Bread,Bakery,2,Concentration,bread.png
+Butter,Dairy,3,Concentration,butter.png
+Cheese,Dairy,5,Concentration,cheese.png
+Apples,Fruits,3,Concentration,apple.png
+Bananas,Fruits,2,Concentration,banana.png
+Tomatoes,Vegetables,2,Concentration,tomato.png
+Potatoes,Vegetables,2,Concentration,potato.png
+Carrots,Vegetables,2,Concentration,carrot.png
+Spinach,Vegetables,2,Concentration,spinach.png
+Chicken,Meat,8,Concentration,chicken.png
+Fish,Meat,10,Concentration,fish.png
+Water,Beverages,1,Concentration,water.png
+Chocolate,Snacks,3,Relaxed,chocolate.png
+Cookies,Snacks,2,Relaxed,cookies.png
+Ice Cream,Dessert,5,Relaxed,icecream.png
+Chips,Snacks,2,Relaxed,chips.png
+Popcorn,Snacks,2,Relaxed,popcorn.png
+Juice,Beverages,3,Relaxed,juice.png
+Soft Drink,Beverages,2,Relaxed,softdrink.png
+Cake,Bakery,6,Relaxed,cake.png
+Candy,Snacks,1,Relaxed,candy.png
+Pizza,Frozen,8,Relaxed,pizza.png
+Burger,Frozen,7,Relaxed,burger.png
+French Fries,Frozen,4,Relaxed,fries.png
+Donut,Bakery,3,Relaxed,donut.png
+Brownie,Dessert,4,Relaxed,brownie.png
+Muffin,Bakery,3,Relaxed,muffin.png

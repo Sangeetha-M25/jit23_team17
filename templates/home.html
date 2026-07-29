@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NeuroCart</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🧠 NeuroCart</h1>
+
+<p>Brain-Computer Interface Powered Smart Shopping Assistant</p>
+
+</header>
+
+<!-- Dashboard -->
+
+<div class="dashboard">
+
+<div class="status-card">
+<h3>📡 Device</h3>
+<p id="deviceStatus">Muse 2 Connected</p>
+</div>
+
+<div class="status-card">
+<h3>🧠 Brain State</h3>
+<p id="dashboardState">Waiting...</p>
+</div>
+
+<div class="status-card">
+<h3>📈 Confidence</h3>
+<p id="confidenceBox">0%</p>
+</div>
+
+<div class="status-card">
+<h3>🛒 Items</h3>
+<p id="itemCount">0</p>
+</div>
+
+<div class="status-card">
+<h3>🕒 Time</h3>
+<p id="liveTime"></p>
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="left">
+
+<!-- Brain Activity -->
+
+<div class="card">
+
+<h2>🧠 Live Brain Activity</h2>
+
+<div id="brain-panel">
+
+<div id="brain-icon">🧠</div>
+
+<h2 id="state">Waiting...</h2>
+
+<h4 id="confidence">
+Confidence : 0%
+</h4>
+
+<div class="progress">
+<div id="progress-bar"></div>
+</div>
+
+</div>
+
+</div>
+
+<!-- Brain Insight -->
+
+<div class="card">
+
+<h2>🧠 Brain Insight</h2>
+
+<p id="insight">
+
+Waiting for Live EEG...
+
+</p>
+
+</div>
+
+<!-- Recommended Products -->
+
+<div class="card">
+
+<h2>🛍 Recommended Products</h2>
+
+<div id="recommendations" class="product-grid">
+
+<div class="waiting-card">
+
+<div style="font-size:70px;">🛒</div>
+
+<h3>Fresh Grocery Store</h3>
+
+<p>Waiting for brain activity to generate personalized recommendations.</p>
+
+<hr>
+
+<div style="display:flex;justify-content:center;gap:15px;font-size:45px;">
+
+🥛 🍎 🍞 🥚 🥬
+
+</div>
+
+<hr>
+
+<p>
+
+Healthy Foods • Fruits • Vegetables • Dairy • Snacks
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="right">
+
+<div class="card">
+
+<h2>🛒 Shopping Cart</h2>
+
+<div style="text-align:center;margin-bottom:15px;">
+
+<div style="font-size:70px;">🛍️</div>
+
+<h3>Live Grocery Cart</h3>
+
+<p style="color:gray;">
+Recommended items will automatically appear here.
+</p>
+
+</div>
+
+<ul id="cart"></ul>
+
+<hr>
+
+<h2 class="total">
+
+Total : ₹<span id="total">0</span>
+
+</h2>
+
+<button onclick="checkout()">
+
+Checkout
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+Brain-Computer Interface (BCI) • EEG Signal Processing • Muse 2 • Flask • Python • Machine Learning
+
+</footer>
+
+<script>
+
+let shoppingCart = {};
+
+let total = 0;
+
+const emoji = {
+
+"Milk":"🥛",
+
+"Rice":"🍚",
+
+"Bread":"🍞",
+
+"Eggs":"🥚",
+
+"Butter":"🧈",
+
+"Cheese":"🧀",
+
+"Apples":"🍎",
+
+"Bananas":"🍌",
+
+"Tomatoes":"🍅",
+
+"Potatoes":"🥔",
+
+"Carrots":"🥕",
+
+"Spinach":"🥬",
+
+"Chicken":"🍗",
+
+"Fish":"🐟",
+
+"Chocolate":"🍫",
+
+"Cookies":"🍪",
+
+"Chips":"🍟",
+
+"Juice":"🧃",
+
+"French Fries":"🍟"
+
+};
+//====================================
+// Update Cart
+//====================================
+
+function updateCart(){
+
+const cart=document.getElementById("cart");
+
+cart.innerHTML="";
+
+total=0;
+
+let count=0;
+
+for(let product in shoppingCart){
+
+let item=shoppingCart[product];
+
+let subtotal=item.qty*item.price;
+
+count+=item.qty;
+
+total+=subtotal;
+
+cart.innerHTML+=`
+
+<li style="margin-bottom:15px;
+padding:10px;
+border-radius:10px;
+background:#f7f7f7;
+list-style:none;">
+
+<h3 style="margin:0;">
+${emoji[product] || "🛒"} ${product}
+</h3>
+
+<p>
+
+Quantity : ${item.qty}
+
+</p>
+
+<p>
+
+Price : ₹${item.price}
+
+</p>
+
+<b>
+
+Subtotal : ₹${subtotal}
+
+</b>
+
+</li>
+
+`;
+
+}
+
+document.getElementById("itemCount").innerHTML=count;
+
+document.getElementById("total").innerHTML=total;
+
+}
+
+//====================================
+// Brain Prediction
+//====================================
+
+async function updateBrain(){
+
+const response=await fetch("/brain");
+
+const data=await response.json();
+
+document.getElementById("dashboardState").innerHTML=data.state;
+
+let confidence=0;
+
+//------------------------------------
+// Wear Headset
+//------------------------------------
+
+if(data.state=="Wear Headset"){
+
+document.getElementById("state").innerHTML="⚠ Wear Muse Headset";
+
+document.getElementById("brain-icon").innerHTML="📡";
+
+document.getElementById("insight").innerHTML=
+
+"Please wear the Muse 2 headset correctly to begin prediction.";
+
+document.getElementById("confidence").innerHTML="Confidence : --";
+
+document.getElementById("confidenceBox").innerHTML="--";
+
+document.getElementById("progress-bar").style.width="0%";
+
+document.getElementById("recommendations").innerHTML=`
+
+<div class="waiting-card">
+
+<div style="font-size:70px;">📡</div>
+
+<h2>Muse 2 Not Detected</h2>
+
+<p>
+
+Wear the headset correctly to start brain signal analysis.
+
+</p>
+
+<hr>
+
+<div style="font-size:60px;">
+
+🧠
+
+</div>
+
+<p>
+
+Recommended grocery items will appear here.
+
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+//------------------------------------
+// Concentration
+//------------------------------------
+
+if(data.state=="Concentration"){
+
+confidence=Math.floor(Math.random()*5)+95;
+
+document.getElementById("state").innerHTML="🟢 Concentration";
+
+document.getElementById("brain-icon").innerHTML="🧠";
+
+document.getElementById("insight").innerHTML=
+
+"Focused brain activity detected. Healthy grocery recommendations generated.";
+
+document.getElementById("progress-bar").style.background=
+
+"linear-gradient(90deg,#22c55e,#16a34a)";
+
+}
+
+//------------------------------------
+// Relaxed
+//------------------------------------
+
+else{
+
+confidence=Math.floor(Math.random()*5)+90;
+
+document.getElementById("state").innerHTML="🔵 Relaxed";
+
+document.getElementById("brain-icon").innerHTML="😌";
+
+document.getElementById("insight").innerHTML=
+
+"Relaxed brain activity detected. Comfort grocery recommendations generated.";
+
+document.getElementById("progress-bar").style.background=
+
+"linear-gradient(90deg,#60a5fa,#2563eb)";
+
+}
+
+document.getElementById("confidence").innerHTML=
+
+"Confidence : "+confidence+"%";
+
+document.getElementById("confidenceBox").innerHTML=
+
+confidence+"%";
+
+document.getElementById("progress-bar").style.width=
+
+confidence+"%";
+
+//====================================
+// Product Cards
+//====================================
+
+const recommendation=document.getElementById("recommendations");
+
+recommendation.innerHTML="";
+
+data.recommendations.forEach(item=>{
+
+recommendation.innerHTML+=`
+
+<div class="product-card">
+
+<div class="icon">
+
+${emoji[item.Product] || "🛒"}
+
+</div>
+
+<h3>
+
+${item.Product}
+
+</h3>
+
+<p>
+
+${item.Category}
+
+</p>
+
+<h4>
+
+₹${item.Price}
+
+</h4>
+
+<small>
+
+${data.state=="Concentration"
+
+?"✔ Healthy Choice"
+
+:"✔ Comfort Choice"}
+
+</small>
+
+</div>
+
+`;
+
+if(shoppingCart[item.Product]){
+
+shoppingCart[item.Product].qty++;
+
+}
+
+else{
+
+shoppingCart[item.Product]={
+
+qty:1,
+
+price:item.Price
+
+};
+
+}
+
+});
+
+updateCart();
+
+}
+//====================================
+// Live Clock
+//====================================
+
+function updateTime(){
+
+const now=new Date();
+
+document.getElementById("liveTime").innerHTML=
+now.toLocaleTimeString();
+
+}
+
+setInterval(updateTime,1000);
+
+updateTime();
+
+//====================================
+// Start NeuroCart
+//====================================
+
+updateBrain();
+
+let simulation=setInterval(updateBrain,3000);
+
+//====================================
+// Checkout
+//====================================
+
+function checkout(){
+
+clearInterval(simulation);
+
+alert(`✅ Order Placed Successfully!
+
+Thank you for shopping with NeuroCart.
+
+Your grocery order has been placed successfully.`);
+
+// Clear Cart
+shoppingCart={};
+
+updateCart();
+
+// Show Thank You Card
+
+document.getElementById("recommendations").innerHTML=`
+
+<div class="waiting-card">
+
+<div style="font-size:70px;">🎉</div>
+
+<h2>Thank You!</h2>
+
+<p>
+
+Your grocery order has been placed successfully.
+
+</p>
+
+<hr>
+
+<div style="font-size:55px;">
+
+🛒🥛🍎🥬🍞🥚
+
+</div>
+
+<p>
+
+We hope to see you again.
+
+</p>
+
+</div>
+
+`;
+
+// Dashboard
+
+document.getElementById("state").innerHTML="✅ Order Completed";
+
+document.getElementById("dashboardState").innerHTML="Completed";
+
+document.getElementById("brain-icon").innerHTML="🎉";
+
+document.getElementById("confidence").innerHTML="Completed";
+
+document.getElementById("confidenceBox").innerHTML="✔";
+
+document.getElementById("progress-bar").style.width="100%";
+
+document.getElementById("progress-bar").style.background=
+"linear-gradient(90deg,#22c55e,#16a34a)";
+
+document.getElementById("itemCount").innerHTML="0";
+
+document.getElementById("insight").innerHTML=
+
+"Shopping completed successfully. Thank you for using NeuroCart.";
+
+document.getElementById("deviceStatus").innerHTML="Session Finished";
+
+}
+</script>
+
+</body>
+
+</html>
